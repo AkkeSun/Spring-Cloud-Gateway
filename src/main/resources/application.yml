@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+# https://cloud.spring.io/spring-cloud-gateway/reference/html/
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            usePreFilter: true
+            usePostFilter: true
+
+      routes:
+        - id: module_1
+          uri: http://localhost:8081
+          predicates:
+            - Path=/register/**
+          filters:
+            - AddRequestHeader=first-request, first-service-requestHeader   #??? ??? ?? ????? ?? ?? (k,v)
+            - AddResponseHeader=first-request, first-service-responseHeader #??? ?? ??? ????? ?? ?? (k,v)
+        - id: module_2
+          uri: http://localhost:8082
+          predicates:
+            - Path=/getData/**
+          filters:
+            - AddRequestHeader=second-request, second-service-requestHeader
+            - AddResponseHeader=second-response, second-service-responseHeader
+            - CustomAuthFilter
+
